@@ -65,6 +65,15 @@ def _apply_env_overrides(config: dict) -> dict:
             config[key] = _coerce(raw, config.get(key))
         except ValueError as exc:
             raise ValueError(f"Invalid value for {env_var}: {exc}") from exc
+
+    # Also handle data_vendors dictionary overrides from environment
+    if "data_vendors" in config:
+        for subkey in config["data_vendors"]:
+            env_var = f"TRADINGAGENTS_DATA_VENDORS_{subkey.upper()}"
+            raw = os.environ.get(env_var)
+            if raw is not None and raw != "":
+                config["data_vendors"][subkey] = raw
+
     return config
 
 
