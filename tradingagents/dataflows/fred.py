@@ -69,6 +69,19 @@ MACRO_SERIES = {
     "consumer_sentiment": "UMCSENT",
     "housing_starts": "HOUST",
     "retail_sales": "RSAFS",
+    # Macro liquidity
+    "total_assets": "WALCL",
+    "tga": "WTREGEN",
+    "reverse_repo": "RRPONTSYD",
+    # Real rates & funding
+    "10y_tips": "DFII10",
+    "sofr": "SOFR",
+    # Credit & spreads
+    "high_yield_oas": "BAMLH0A0HYM2",
+    "baaff": "BAAFF",
+    # FX & carry trade
+    "usd_jpy": "DEXJPUS",
+    "eur_usd": "DEXUSEU",
 }
 
 

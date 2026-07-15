@@ -51,6 +51,9 @@ class FredResolutionTests(unittest.TestCase):
     def test_alias_maps_to_series_id(self):
         self.assertEqual(fred._resolve_series_id("cpi"), "CPIAUCSL")
         self.assertEqual(fred._resolve_series_id("unemployment"), "UNRATE")
+        self.assertEqual(fred._resolve_series_id("tga"), "WTREGEN")
+        self.assertEqual(fred._resolve_series_id("high_yield_oas"), "BAMLH0A0HYM2")
+        self.assertEqual(fred._resolve_series_id("usd_jpy"), "DEXJPUS")
 
     def test_alias_is_case_and_separator_insensitive(self):
         self.assertEqual(fred._resolve_series_id("Fed Funds Rate"), "FEDFUNDS")
