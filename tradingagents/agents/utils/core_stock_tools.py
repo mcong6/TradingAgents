@@ -22,3 +22,17 @@ def get_stock_data(
         str: A formatted dataframe containing the stock price data for the specified ticker symbol in the specified date range.
     """
     return route_to_vendor("get_stock_data", symbol, start_date, end_date)
+
+@tool
+def get_options_data(
+    symbol: Annotated[str, "ticker symbol of the company"],
+) -> str:
+    """
+    Retrieve options flow data (Put/Call ratio and highest Open Interest strikes) for a given ticker symbol.
+    Uses the configured core_stock_apis vendor (e.g. yfinance).
+    Args:
+        symbol (str): Ticker symbol of the company, e.g. AAPL, TSM
+    Returns:
+        str: A formatted markdown string containing the nearest expiration options data, Put/Call Ratios, and Strike Walls.
+    """
+    return route_to_vendor("get_options_data", symbol)

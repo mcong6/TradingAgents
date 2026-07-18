@@ -27,6 +27,7 @@ from .y_finance import (
     get_insider_transactions as get_yfinance_insider_transactions,
     get_stock_stats_indicators_window,
     get_YFin_data_online,
+    get_options_data as get_yfinance_options_data,
 )
 from .yfinance_news import get_global_news_yfinance, get_news_yfinance
 
@@ -35,9 +36,10 @@ logger = logging.getLogger(__name__)
 # Tools organized by category
 TOOLS_CATEGORIES = {
     "core_stock_apis": {
-        "description": "OHLCV stock price data",
+        "description": "OHLCV stock price data and options flow",
         "tools": [
-            "get_stock_data"
+            "get_stock_data",
+            "get_options_data"
         ]
     },
     "technical_indicators": {
@@ -97,6 +99,9 @@ VENDOR_METHODS = {
     "get_stock_data": {
         "alpha_vantage": get_alpha_vantage_stock,
         "yfinance": get_YFin_data_online,
+    },
+    "get_options_data": {
+        "yfinance": get_yfinance_options_data,
     },
     # technical_indicators
     "get_indicators": {

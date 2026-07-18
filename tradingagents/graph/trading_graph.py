@@ -22,6 +22,7 @@ from tradingagents.agents.utils.agent_utils import (
     get_insider_transactions,
     get_macro_indicators,
     get_news,
+    get_options_data,
     get_prediction_markets,
     get_stock_data,
     get_verified_market_snapshot,
@@ -194,6 +195,8 @@ class TradingAgentsGraph:
                     get_stock_data,
                     # Technical indicators
                     get_indicators,
+                    # Options market data
+                    get_options_data,
                     # Deterministic verification snapshot (bound to the analyst
                     # LLM and required by its prompt; must be executable here or
                     # the call fails and the model reports it "unavailable").
