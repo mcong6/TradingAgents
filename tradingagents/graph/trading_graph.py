@@ -421,6 +421,7 @@ class TradingAgentsGraph:
 
     def _run_graph(self, company_name, trade_date, asset_type: str = "stock"):
         """Execute the graph and write the resulting state to disk and memory log."""
+        logger.info(f"Starting Graph Execution for {company_name} on {trade_date} (asset_type={asset_type})")
         # Initialize state — inject memory log context for PM and the
         # deterministically resolved instrument identity for all agents.
         past_context = self.memory_log.get_past_context(company_name)

@@ -1,9 +1,22 @@
 import datetime
 import os
 import time
+import logging
 from collections import deque
 from functools import wraps
 from pathlib import Path
+
+# Configure root logger to output to project/logs/system.log
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+LOGS_DIR = PROJECT_ROOT / "logs"
+LOGS_DIR.mkdir(parents=True, exist_ok=True)
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    filename=LOGS_DIR / "system.log",
+    filemode="a",
+    encoding="utf-8",
+)
 
 import typer
 from rich import box

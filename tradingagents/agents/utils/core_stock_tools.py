@@ -1,8 +1,11 @@
+import logging
 from typing import Annotated
 
 from langchain_core.tools import tool
 
 from tradingagents.dataflows.interface import route_to_vendor
+
+logger = logging.getLogger(__name__)
 
 
 @tool
@@ -21,6 +24,7 @@ def get_stock_data(
     Returns:
         str: A formatted dataframe containing the stock price data for the specified ticker symbol in the specified date range.
     """
+    logger.info(f"Executing tool get_stock_data for {symbol}")
     return route_to_vendor("get_stock_data", symbol, start_date, end_date)
 
 @tool
@@ -35,4 +39,5 @@ def get_options_data(
     Returns:
         str: A formatted markdown string containing the nearest expiration options data, Put/Call Ratios, and Strike Walls.
     """
+    logger.info(f"Executing tool get_options_data for {symbol}")
     return route_to_vendor("get_options_data", symbol)

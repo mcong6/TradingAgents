@@ -25,6 +25,7 @@ See: https://github.com/TauricResearch/TradingAgents/issues/796
 """
 
 from datetime import datetime, timedelta
+import logging
 
 from langchain_core.messages import AIMessage
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
@@ -41,6 +42,8 @@ from tradingagents.agents.utils.structured import (
 )
 from tradingagents.dataflows.reddit import fetch_reddit_posts
 from tradingagents.dataflows.stocktwits import fetch_stocktwits_messages
+
+logger = logging.getLogger(__name__)
 
 
 def _seven_days_back(trade_date: str) -> str:
@@ -59,6 +62,7 @@ def create_sentiment_analyst(llm):
 
     def sentiment_analyst_node(state):
         ticker = state["company_of_interest"]
+        logger.info(f"Starting sentiment_analyst for {ticker}")
         end_date = state["trade_date"]
         start_date = _seven_days_back(end_date)
         instrument_context = get_instrument_context_from_state(state)
