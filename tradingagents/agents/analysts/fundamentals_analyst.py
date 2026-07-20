@@ -1,3 +1,4 @@
+import logging
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 
 from tradingagents.agents.utils.agent_utils import (
@@ -9,9 +10,12 @@ from tradingagents.agents.utils.agent_utils import (
     get_language_instruction,
 )
 
+logger = logging.getLogger(__name__)
 
 def create_fundamentals_analyst(llm):
     def fundamentals_analyst_node(state):
+        ticker = state.get("ticker", "Unknown")
+        logger.info(f"Starting fundamentals_analyst for {ticker}")
         current_date = state["trade_date"]
         instrument_context = get_instrument_context_from_state(state)
 

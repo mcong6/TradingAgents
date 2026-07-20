@@ -22,6 +22,7 @@ from tradingagents.agents.utils.agent_utils import (
     get_insider_transactions,
     get_macro_indicators,
     get_news,
+    get_options_data,
     get_prediction_markets,
     get_stock_data,
     get_verified_market_snapshot,
@@ -194,6 +195,8 @@ class TradingAgentsGraph:
                     get_stock_data,
                     # Technical indicators
                     get_indicators,
+                    # Options market data
+                    get_options_data,
                     # Deterministic verification snapshot (bound to the analyst
                     # LLM and required by its prompt; must be executable here or
                     # the call fails and the model reports it "unavailable").
@@ -418,6 +421,7 @@ class TradingAgentsGraph:
 
     def _run_graph(self, company_name, trade_date, asset_type: str = "stock"):
         """Execute the graph and write the resulting state to disk and memory log."""
+        logger.info(f"Starting Graph Execution for {company_name} on {trade_date} (asset_type={asset_type})")
         # Initialize state — inject memory log context for PM and the
         # deterministically resolved instrument identity for all agents.
         past_context = self.memory_log.get_past_context(company_name)

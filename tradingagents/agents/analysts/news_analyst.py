@@ -1,3 +1,4 @@
+import logging
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 
 from tradingagents.agents.utils.agent_utils import (
@@ -9,9 +10,12 @@ from tradingagents.agents.utils.agent_utils import (
     get_prediction_markets,
 )
 
+logger = logging.getLogger(__name__)
 
 def create_news_analyst(llm):
     def news_analyst_node(state):
+        ticker = state.get("ticker", "Unknown")
+        logger.info(f"Starting news_analyst for {ticker}")
         current_date = state["trade_date"]
         asset_type = state.get("asset_type", "stock")
         asset_label = "company" if asset_type == "stock" else "asset"

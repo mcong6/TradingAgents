@@ -468,3 +468,68 @@ def get_insider_transactions(
 
     except Exception as e:
         return f"Error retrieving insider transactions for {ticker}: {str(e)}"
+
+def get_options_data(
+    symbol: Annotated[str, "ticker symbol of the company"],
+) -> str:
+    """Get options chain data, Put/Call ratios, and significant strike levels from yfinance."""
+    canonical = normalize_symbol(symbol)
+    try:
+        ticker = yf.Ticker(canonical)
+        
+        # Get all available expiration dates
+        options = yf_retry(lambda: ticker.options)
+        
+        if not options:
+            raise NoMarketDataError(symbol, canonical, "no options data returned or symbol has no options")
+            
+        # We will use the nearest expiration date
+        nearest_expiry = options[0]
+        chain = yf_retry(lambda: ticker.option_chain(nearest_expiry))
+        
+        calls = chain.calls
+        puts = chain.puts
+        
+        if calls.empty and puts.empty:
+            raise NoMarketDataError(symbol, canonical, f"empty options chain for {nearest_expiry}")
+            
+        # Calculate metrics
+        total_call_vol = calls['volume'].sum() if 'volume' in calls.columns else 0
+        total_put_vol = puts['volume'].sum() if 'volume' in puts.columns else 0
+        
+        total_call_oi = calls['openInterest'].sum() if 'openInterest' in calls.columns else 0
+        total_put_oi = puts['openInterest'].sum() if 'openInterest' in puts.columns else 0
+        
+        # Calculate PCRs
+        vol_pcr = total_put_vol / total_call_vol if total_call_vol > 0 else 0
+        oi_pcr = total_put_oi / total_call_oi if total_call_oi > 0 else 0
+        
+        # Find Walls (Strikes with max Open Interest)
+        call_wall_strike = calls.loc[calls['openInterest'].idxmax()]['strike'] if not calls.empty and 'openInterest' in calls.columns and not calls['openInterest'].isna().all() else "N/A"
+        put_wall_strike = puts.loc[puts['openInterest'].idxmax()]['strike'] if not puts.empty and 'openInterest' in puts.columns and not puts['openInterest'].isna().all() else "N/A"
+        
+        # Format the output
+        lines = []
+        lines.append(f"# Options Market Data for {canonical}")
+        lines.append(f"**Nearest Expiration Date**: {nearest_expiry}")
+        lines.append(f"**Data Retrieved On**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        lines.append("")
+        lines.append("## Market Sentiment (Put/Call Ratios)")
+        lines.append(f"- **Volume PCR**: {vol_pcr:.2f} (Total Put Vol: {total_put_vol}, Total Call Vol: {total_call_vol})")
+        lines.append(f"- **Open Interest PCR**: {oi_pcr:.2f} (Total Put OI: {total_put_oi}, Total Call OI: {total_call_oi})")
+        lines.append("")
+        lines.append("## Significant Levels (Options Walls)")
+        lines.append(f"- **Call Wall (Resistance)**: ${call_wall_strike} (Strike with highest Call Open Interest)")
+        lines.append(f"- **Put Wall (Support)**: ${put_wall_strike} (Strike with highest Put Open Interest)")
+        lines.append("")
+        lines.append("## Interpretation Guide")
+        lines.append("- High Volume PCR (>1.0) indicates bearish short-term sentiment or heavy hedging.")
+        lines.append("- High OI PCR indicates longer-term bearish sentiment or structural hedging.")
+        lines.append("- The Call Wall often acts as a major resistance level, while the Put Wall acts as a major support level.")
+        
+        return "\n".join(lines)
+        
+    except NoMarketDataError:
+        raise
+    except Exception as e:
+        return f"Error retrieving options data for {symbol}: {str(e)}"
